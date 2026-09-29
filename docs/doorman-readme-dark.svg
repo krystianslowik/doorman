@@ -1,30 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
   <title id="title">Doorman classifies email domains</title>
   <desc id="desc">An envelope passes through a blue doorway and receives separate free and disposable flags.</desc>
-  <rect width="1200" height="360" rx="16" fill="#f5f7f9"/>
+  <rect width="1200" height="360" rx="16" fill="#161b22"/>
 
-  <g fill="none" stroke="#243342" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#c9d1d9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M87 180h148"/>
-    <rect x="235" y="145" width="94" height="70" rx="2" fill="#f5f7f9"/>
+    <rect x="235" y="145" width="94" height="70" rx="2" fill="#161b22"/>
     <path d="m238 148 44 36 44-36M238 212l35-31m53 31-35-31"/>
     <path d="M329 180h128"/>
     <path d="M457 73h145v214M457 73v214" stroke-width="5"/>
   </g>
 
-  <path d="M473 91 579 108v162l-106 17Z" fill="#326db2"/>
-  <path d="M493 119h32v58h-32zm46 0h24v58h-24zM493 195h32v58h-32zm46 0h24v58h-24z" fill="none" stroke="#173b63" stroke-width="2"/>
-  <circle cx="566" cy="188" r="4" fill="#173b63"/>
+  <path d="M473 91 579 108v162l-106 17Z" fill="#4f8fdc"/>
+  <path d="M493 119h32v58h-32zm46 0h24v58h-24zM493 195h32v58h-32zm46 0h24v58h-24z" fill="none" stroke="#0d2a4a" stroke-width="2"/>
+  <circle cx="566" cy="188" r="4" fill="#0d2a4a"/>
 
-  <g fill="none" stroke="#326db2" stroke-width="3" stroke-linecap="round">
+  <g fill="none" stroke="#4f8fdc" stroke-width="3" stroke-linecap="round">
     <path d="M603 158h103c46 0 53-42 103-42h89"/>
     <path d="M603 202h103c46 0 53 42 103 42h89"/>
   </g>
 
-  <g fill="#f5f7f9" stroke="#243342" stroke-width="2">
+  <g fill="#161b22" stroke="#c9d1d9" stroke-width="2">
     <rect x="898" y="88" width="229" height="56" rx="3"/>
     <rect x="898" y="216" width="229" height="56" rx="3"/>
   </g>
-  <g fill="#243342" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">
+  <g fill="#c9d1d9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">
     <text x="926" y="123">free</text>
     <text x="926" y="251">disposable</text>
   </g>

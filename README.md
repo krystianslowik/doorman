@@ -1,10 +1,32 @@
-# Doorman
+<h1 align="center">Doorman</h1>
 
 <p align="center">
-  <img src="docs/doorman-readme.svg" width="520" alt="An email entering a doorway and receiving separate free and disposable flags">
+  Is this email from a free provider, a disposable one, or neither?<br>
+  A small API that checks the domain against open lists. It doesn't check that the mailbox exists.
 </p>
 
-Doorman tells you whether an email address (or domain) is from a free provider like Gmail, a disposable one like Mailinator, or neither. It checks domain lists. It doesn't check that the mailbox exists.
+<p align="center">
+  <a href="https://github.com/krystianslowik/doorman/actions/workflows/ci.yml"><img src="https://github.com/krystianslowik/doorman/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/runs_on-Cloudflare_Workers-f38020?logo=cloudflare&logoColor=white" alt="Runs on Cloudflare Workers">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+</p>
+
+<p align="center">
+  <a href="https://doorman.krystianslowik.com/v1/check?email=jane@mailinator.com"><b>Live demo</b></a>
+  &nbsp;&middot;&nbsp;
+  <a href="#api">API</a>
+  &nbsp;&middot;&nbsp;
+  <a href="#run-it-yourself">Run it</a>
+  &nbsp;&middot;&nbsp;
+  <a href="#deploy-to-cloudflare">Deploy</a>
+  &nbsp;&middot;&nbsp;
+  <a href="#domain-lists">Domain lists</a>
+</p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/doorman-readme-dark.svg">
+  <img src="docs/doorman-readme.svg" width="100%" alt="An email entering a doorway and receiving separate free and disposable flags">
+</picture>
 
 ## Try it
 
