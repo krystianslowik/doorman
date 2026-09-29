@@ -1,0 +1,29 @@
+{
+  "name": "doorman",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "start": "node --env-file-if-exists=.env dist/server.js",
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "update-data": "node scripts/update-data.mjs"
+  },
+  "dependencies": {
+    "tldts": "^7.4.16"
+  },
+  "devDependencies": {
+    "@cloudflare/containers": "^0.1.1",
+    "@types/node": "^25.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18",
+    "wrangler": "^4.115.0"
+  }
+}
