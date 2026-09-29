@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.wrangler
+.git
+tests
+scripts
+vitest.config.ts
+README.md
+.github
