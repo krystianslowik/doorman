@@ -1,6 +1,8 @@
 # Doorman
 
-<img src="docs/doorman-readme.svg" width="520" alt="An email entering a doorway and receiving separate free and disposable flags">
+<p align="center">
+  <img src="docs/doorman-readme.svg" width="520" alt="An email entering a doorway and receiving separate free and disposable flags">
+</p>
 
 **Doorman is an email-domain API.** It returns separate `free` and `disposable` flags for an address or domain. It checks domain lists; it does not verify that a mailbox exists.
 
