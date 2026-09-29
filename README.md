@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/krystianslowik/doorman/actions/workflows/ci.yml"><img src="https://github.com/krystianslowik/doorman/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/krystianslowik/doorman/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/krystianslowik/doorman/ci.yml?branch=main&label=CI" alt="CI"></a>
   <img src="https://img.shields.io/badge/runs_on-Cloudflare_Workers-f38020?logo=cloudflare&logoColor=white" alt="Runs on Cloudflare Workers">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
