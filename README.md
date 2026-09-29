@@ -1,16 +1,56 @@
 # Doorman
 
-Doorman checks email addresses at the door. It tells you whether an address (or domain) belongs to a **free** provider (Gmail, Outlook, …), a **disposable** one (Mailinator, YOPmail, …), or neither, which usually means a company address.
+![An email entering a doorway and receiving separate free and disposable flags](docs/doorman-readme.svg)
 
-It's a small REST API. The domain lists are built from maintained open-source lists (see [Sources](#sources)), committed in [`data/`](data/) and refreshed on demand (see [Refreshing the domain lists](#refreshing-the-domain-lists)). They ship inside the Docker image, so the container needs no outbound internet access.
+**Check an email address before you let it through.** Doorman is a small REST API that returns separate `free` and `disposable` flags for an email address or domain.
 
-- Runtime: Node.js 24+, deployed on Cloudflare Containers (or anywhere Docker runs)
-- Auth: Bearer API keys
-- Port: `3851`
+| Example | `free` | `disposable` |
+| --- | :---: | :---: |
+| `jane@gmail.com` | `true` | `false` |
+| `jane@mailinator.com` | `true` | `true` |
+| `jane@acme.com` | `false` | `false` |
+
+A result with both flags `false` means the domain is absent from the lists; it does not prove the address belongs to a company. Every disposable domain is also marked free.
+
+The lists are committed in [`data/`](data/) and bundled with the service, so checks need no outbound internet access. You can [review the sources](#sources) and [refresh the lists](#refreshing-the-domain-lists) when needed.
+
+## Try the demo
+
+The public demo is at [doorman.krystianslowik.com](https://doorman.krystianslowik.com). It needs no API key, allows five requests per hour, and supports batch checks.
+
+```bash
+curl -H "Content-Type: application/json" \
+  -d '{"emails":["jane@gmail.com","jane@mailinator.com","jane@acme.com"]}' \
+  https://doorman.krystianslowik.com/v1/check
+```
+
+## Run locally
+
+Requires Node.js 24 or newer.
+
+```bash
+cp .env.example .env
+# Set DOORMAN_API_KEY=local-test-key in .env
+npm ci
+npm run dev
+```
+
+In another terminal:
+
+```bash
+curl -H "Authorization: Bearer local-test-key" \
+  "http://localhost:3851/v1/check?email=jane@gmail.com"
+```
+
+```json
+{ "input": "jane@gmail.com", "domain": "gmail.com", "free": true, "disposable": false }
+```
+
+The service also runs in Docker or on Cloudflare Containers. See [local development](#local-development) and [deployment](#deploy-to-cloudflare) for those paths.
 
 ## API
 
-All `/v1/*` endpoints need `Authorization: Bearer <API key>`. `/health` is public.
+By default, `/v1/*` endpoints need `Authorization: Bearer <API key>`. The public demo above does not. `/health` is public.
 
 ### `GET /v1/check?email=<email-or-domain>`
 
@@ -43,11 +83,11 @@ curl -H "Authorization: Bearer $API_KEY" -H "Content-Type: application/json" \
 }
 ```
 
-Prefer `POST` for real people's emails. Query strings can end up in access logs; request bodies don't.
+Prefer `POST` for real people's emails. Query strings are commonly recorded in access logs; request bodies are less likely to be logged, though your infrastructure may still capture them.
 
 ### Semantics
 
-- Input can be a full email or a bare domain. It's trimmed, lowercased and converted to punycode, so an internationalized domain and a mixed-case one both match.
+- Input can be a full email or a bare domain. The host is trimmed, lowercased and converted to punycode for lookup, so an internationalized domain and a mixed-case one both match. The `input` field preserves the submitted value.
 - The GET query keeps a literal `+`, so `?email=jane+tag@gmail.com` checks `jane+tag@gmail.com`.
 - The lookup checks the full host and each parent down to its registrable domain, never further: `x@0.mail.mujur.id` checks `0.mail.mujur.id`, then `mail.mujur.id`, then `mujur.id`. The `domain` field is that registrable domain.
 - Private suffixes count, so a lookup for `foo.github.io` treats `foo.github.io` itself as the registrable domain instead of climbing further up to `github.io`.
@@ -58,7 +98,7 @@ Prefer `POST` for real people's emails. Query strings can end up in access logs;
 
 ## Authentication
 
-Bearer API keys, set in `DOORMAN_API_KEY`: one key, or a comma-separated list. Give each client (a workflow, a script, …) its own key so you can revoke one without affecting the others. The scheme is case-insensitive (`Bearer`, `bearer`, `BEARER` all work).
+Authenticated deployments use bearer API keys, set in `DOORMAN_API_KEY`: one key, or a comma-separated list. Give each client (a workflow, a script, …) its own key so you can revoke one without affecting the others. The scheme is case-insensitive (`Bearer`, `bearer`, `BEARER` all work).
 
 ```bash
 openssl rand -hex 32   # generate a key
