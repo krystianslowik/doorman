@@ -45,7 +45,6 @@ describe("config", () => {
 
   it("applies defaults", () => {
     expect(loadConfig({ DOORMAN_API_KEY: "k" })).toEqual({
-      auth: "bearer",
       apiKeys: ["k"],
       maxBatchSize: 100,
       port: 3851
@@ -54,22 +53,5 @@ describe("config", () => {
 
   it("rejects invalid numbers", () => {
     expect(() => loadConfig({ DOORMAN_API_KEY: "k", PORT: "abc" })).toThrow(/Invalid/);
-  });
-
-  it("allows edge auth with no API key", () => {
-    expect(loadConfig({ DOORMAN_AUTH: "edge" })).toEqual({
-      auth: "edge",
-      apiKeys: [],
-      maxBatchSize: 100,
-      port: 3851
-    });
-  });
-
-  it("rejects unknown DOORMAN_AUTH values", () => {
-    expect(() => loadConfig({ DOORMAN_AUTH: "nope", DOORMAN_API_KEY: "k" })).toThrow(/DOORMAN_AUTH/);
-  });
-
-  it("still requires DOORMAN_API_KEY in bearer mode", () => {
-    expect(() => loadConfig({ DOORMAN_AUTH: "bearer" })).toThrow(/DOORMAN_API_KEY/);
   });
 });

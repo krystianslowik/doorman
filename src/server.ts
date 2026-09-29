@@ -5,7 +5,7 @@ const config = loadConfig();
 const server = createApp(config);
 
 server.listen(config.port, "0.0.0.0", () => {
-  console.log(`doorman listening on ${config.port} (auth: ${config.auth})`);
+  console.log(`doorman listening on ${config.port}`);
 });
 
 process.on("SIGTERM", () => {

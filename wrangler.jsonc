@@ -5,21 +5,16 @@
   "compatibility_date": "2026-02-26",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
-    "enabled": true
-  },
-  "containers": [
-    {
-      "class_name": "DoormanContainer",
-      "image": "./Dockerfile",
-      "max_instances": 1,
-      "instance_type": "basic"
+    "enabled": true,
+    "traces": {
+      "enabled": true
     }
-  ],
+  },
   "durable_objects": {
     "bindings": [
       {
-        "name": "DOORMAN_CONTAINER",
-        "class_name": "DoormanContainer"
+        "name": "RATE_LIMITER",
+        "class_name": "RateLimiter"
       }
     ]
   },
@@ -27,6 +22,15 @@
     {
       "tag": "v1",
       "new_sqlite_classes": ["DoormanContainer"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["RateLimiter"]
+    },
+    {
+      // The Container-backed class is gone: the check runs in the Worker itself.
+      "tag": "v3",
+      "deleted_classes": ["DoormanContainer"]
     }
   ]
 }

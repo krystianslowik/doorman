@@ -10,7 +10,7 @@ let server: Server;
 let baseUrl: string;
 
 beforeAll(async () => {
-  server = createApp({ auth: "bearer", apiKeys: [API_KEY], maxBatchSize: 3, port: 0 });
+  server = createApp({ apiKeys: [API_KEY], maxBatchSize: 3, port: 0 });
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 });
@@ -97,27 +97,5 @@ describe("HTTP API", () => {
   it("returns 404 and 405 for unknown routes and methods", async () => {
     expect((await fetch(`${baseUrl}/nope`, { headers: auth })).status).toBe(404);
     expect((await fetch(`${baseUrl}/v1/check`, { method: "DELETE", headers: auth })).status).toBe(405);
-  });
-});
-
-describe("HTTP API in edge auth mode", () => {
-  let edgeServer: Server;
-  let edgeBaseUrl: string;
-
-  beforeAll(async () => {
-    // The Worker already checked the key; the container trusts it and skips its own check.
-    edgeServer = createApp({ auth: "edge", apiKeys: [], maxBatchSize: 3, port: 0 });
-    await new Promise<void>((resolve) => edgeServer.listen(0, "127.0.0.1", resolve));
-    edgeBaseUrl = `http://127.0.0.1:${(edgeServer.address() as AddressInfo).port}`;
-  });
-
-  afterAll(async () => {
-    await new Promise((resolve) => edgeServer.close(resolve));
-  });
-
-  it("allows a GET without an Authorization header", async () => {
-    const res = await fetch(`${edgeBaseUrl}/v1/check?email=a@gmail.com`);
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ input: "a@gmail.com", domain: "gmail.com", free: true, disposable: false });
   });
 });
