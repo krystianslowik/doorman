@@ -1,28 +1,42 @@
 # Doorman
 
-![An email entering a doorway and receiving separate free and disposable flags](docs/doorman-readme.svg)
+<img src="docs/doorman-readme.svg" width="520" alt="An email entering a doorway and receiving separate free and disposable flags">
 
-**Check an email address before you let it through.** Doorman is a small REST API that returns separate `free` and `disposable` flags for an email address or domain.
-
-| Example | `free` | `disposable` |
-| --- | :---: | :---: |
-| `jane@gmail.com` | `true` | `false` |
-| `jane@mailinator.com` | `true` | `true` |
-| `jane@acme.com` | `false` | `false` |
-
-A result with both flags `false` means the domain is absent from the lists; it does not prove the address belongs to a company. Every disposable domain is also marked free.
-
-The lists are committed in [`data/`](data/) and bundled with the service, so checks need no outbound internet access. You can [review the sources](#sources) and [refresh the lists](#refreshing-the-domain-lists) when needed.
+**Doorman is an email-domain API.** It returns separate `free` and `disposable` flags for an address or domain. It checks domain lists; it does not verify that a mailbox exists.
 
 ## Try the demo
 
-The public demo is at [doorman.krystianslowik.com](https://doorman.krystianslowik.com). It needs no API key, allows five requests per hour, and supports batch checks.
+The [public demo](https://doorman.krystianslowik.com) needs no API key. It allows **five requests per rolling hour per client** (one IPv4 address or IPv6 `/64`); a batch counts as one request.
+
+Check one address:
+
+```bash
+curl "https://doorman.krystianslowik.com/v1/check?email=jane@gmail.com"
+```
+
+```json
+{ "input": "jane@gmail.com", "domain": "gmail.com", "free": true, "disposable": false }
+```
+
+Check several in one request:
 
 ```bash
 curl -H "Content-Type: application/json" \
   -d '{"emails":["jane@gmail.com","jane@mailinator.com","jane@acme.com"]}' \
   https://doorman.krystianslowik.com/v1/check
 ```
+
+```json
+{
+  "results": [
+    { "input": "jane@gmail.com", "domain": "gmail.com", "free": true, "disposable": false },
+    { "input": "jane@mailinator.com", "domain": "mailinator.com", "free": true, "disposable": true },
+    { "input": "jane@acme.com", "domain": "acme.com", "free": false, "disposable": false }
+  ]
+}
+```
+
+Both flags can be `true`. If both are `false`, neither list matched; that does not prove the address belongs to a company. The lists are committed in [`data/`](data/) and bundled with the service, so checks need no outbound internet access. You can [review their sources](#sources) and [refresh them](#refreshing-the-domain-lists) when needed.
 
 ## Run locally
 
@@ -46,11 +60,11 @@ curl -H "Authorization: Bearer local-test-key" \
 { "input": "jane@gmail.com", "domain": "gmail.com", "free": true, "disposable": false }
 ```
 
-The service also runs in Docker or on Cloudflare Containers. See [local development](#local-development) and [deployment](#deploy-to-cloudflare) for those paths.
+The service also runs in Docker or as a Cloudflare Worker. See [local development](#local-development) and [deployment](#deploy-to-cloudflare) for those paths.
 
 ## API
 
-By default, `/v1/*` endpoints need `Authorization: Bearer <API key>`. The public demo above does not. `/health` is public.
+The Cloudflare Worker accepts anonymous `/v1/check` requests within its rate limit. Node and Docker runs require `Authorization: Bearer <API key>`. `/health` is public in both runtimes.
 
 ### `GET /v1/check?email=<email-or-domain>`
 
@@ -65,7 +79,7 @@ curl -H "Authorization: Bearer $API_KEY" \
 
 ### `POST /v1/check`
 
-Single value: `{"email": "jane@gmail.com"}`. Batch (up to `MAX_BATCH_SIZE`, default 100): `{"emails": [...]}`.
+Single value: `{"email": "jane@gmail.com"}`. Batch: `{"emails": [...]}`. The Worker accepts up to 100 items; Node and Docker use `MAX_BATCH_SIZE` (default 100).
 
 ```bash
 curl -H "Authorization: Bearer $API_KEY" -H "Content-Type: application/json" \
@@ -94,23 +108,27 @@ Prefer `POST` for real people's emails. Query strings are commonly recorded in a
 - IP addresses, URL fragments (`gmail.com/acme.com`) and hosts with no registrable domain (a bare public suffix such as `github.io`, or a single label such as `localhost`) are rejected as invalid input.
 - Every disposable domain also counts as free, so `disposable: true` always comes with `free: true`. Use `free && !disposable` for "regular free provider".
 - The lists aren't complete. A domain missing from both lists comes back as `free: false`. See [Adding or removing a domain by hand](#adding-or-removing-a-domain-by-hand).
-- Status codes: `200` success (in a batch, invalid items carry an `error` field instead), `400` invalid input or body, `401` missing or wrong token, `404`/`405` unknown route or method, `413` body over 64 KiB, `500` unexpected error, `503` (Worker only) the key isn't set, or the container couldn't start (JSON body, `retry-after: 5`).
+- Status codes: `200` success (in a batch, invalid items carry an `error` field instead), `400` invalid input or body, `401` missing or wrong token where a key is required or supplied, `404`/`405` unknown route or method, `413` body over 64 KiB, `429` anonymous Worker limit reached, and `500` unexpected error.
 
 ## Authentication
 
-Authenticated deployments use bearer API keys, set in `DOORMAN_API_KEY`: one key, or a comma-separated list. Give each client (a workflow, a script, …) its own key so you can revoke one without affecting the others. The scheme is case-insensitive (`Bearer`, `bearer`, `BEARER` all work).
+Bearer API keys are set in `DOORMAN_API_KEY`: one key, or a comma-separated list. Give each client its own key so you can revoke one without affecting the others. The scheme is case-insensitive (`Bearer`, `bearer`, `BEARER` all work).
 
 ```bash
 openssl rand -hex 32   # generate a key
 ```
 
-On Cloudflare, the Worker is the only place that checks the key: it rejects an unauthenticated request before the container wakes, and the container runs with `DOORMAN_AUTH=edge`, trusting whatever reaches it. Locally (`npm run dev`, `docker run`), the container defaults to `DOORMAN_AUTH=bearer` and checks `DOORMAN_API_KEY` itself, so those runs test the same auth.
+On Cloudflare, requests without an `Authorization` header are anonymous and rate limited. A request that includes the header must use a valid key; valid keys bypass the anonymous limit, and invalid keys receive `401`. Node and Docker require a key for every `/v1/check` request and refuse to start without `DOORMAN_API_KEY`.
 
-If `DOORMAN_API_KEY` is missing, the Worker returns `503` and, locally, the container refuses to start (fail closed).
+## Rate limits
+
+The Worker allows **five anonymous requests per rolling hour** per IPv4 address or IPv6 `/64`. A batch counts as one request. Valid bearer-key requests are not limited. Anonymous responses include `ratelimit-limit` and `ratelimit-remaining` headers; a `429` response also includes `retry-after` in seconds and `{"error":"Rate limit exceeded, retry later or use an API key"}`.
+
+Node and Docker have no anonymous mode or built-in rate limit.
 
 ## Local development
 
-All three ways of running locally read the same `.env` file, which is gitignored:
+Node, Docker, and Wrangler can read the same `.env` file, which is gitignored:
 
 ```bash
 cp .env.example .env    # set DOORMAN_API_KEY, e.g. local-test-key
@@ -133,36 +151,35 @@ docker build -t doorman .
 docker run --rm -p 3851:3851 --env-file .env doorman
 ```
 
-The image is `linux/amd64` because Cloudflare Containers need it. On Apple Silicon, Docker prints a platform warning and runs it under emulation.
+The current Dockerfile builds a `linux/amd64` image. On Apple Silicon, Docker may warn and run it under emulation.
 
-### Full stack: Worker → Durable Object → container (`wrangler dev`)
-
-Requires Docker running.
+### Cloudflare Worker (`wrangler dev`)
 
 ```bash
-npx wrangler dev        # loads .env as Worker secrets, http://localhost:8787
+npx wrangler dev        # loads DOORMAN_API_KEY from .env, http://localhost:8787
 curl -H "Authorization: Bearer local-test-key" "http://localhost:8787/v1/check?email=a@gmail.com"
 ```
 
-- **Cold start:** the first `/v1` request starts the container, which takes a few seconds.
-- **Only `NODE_ENV` and `DOORMAN_AUTH=edge` reach the container:** that's what the Durable Object sets, same as in production. `.env` values such as `MAX_BATCH_SIZE` don't reach the container in this mode and fall back to their defaults.
+The Worker bundles the committed domain lists and checks requests itself. Its `MAX_BATCH_SIZE` is fixed at 100; the `.env` setting applies only to Node and Docker.
 
 ## Deploy to Cloudflare
 
-You need a Cloudflare account with Containers enabled, and Docker running.
+You need a Cloudflare account with Workers enabled. Docker is not needed for this deployment.
 
-1. Deploy: `npx wrangler deploy`. Wrangler builds the image, pushes it and prints the Worker URL (`https://doorman.<your-subdomain>.workers.dev`).
-2. Set the key as a secret: `npx wrangler secret put DOORMAN_API_KEY`, then paste `key1,key2`. Use a secret rather than a plain variable: `wrangler deploy` drops dashboard variables that aren't in `wrangler.jsonc`, but secrets survive deploys.
+1. Deploy: `npx wrangler deploy`. Wrangler bundles the Worker and domain lists, configures its rate-limit Durable Object, and prints the Worker URL (`https://doorman.<your-subdomain>.workers.dev`).
+2. To allow authenticated, unlimited requests, set the key as a secret: `npx wrangler secret put DOORMAN_API_KEY`, then enter `key1,key2`. Without a key, callers can still use the anonymous limit.
 3. Verify:
 
    ```bash
    curl https://doorman.<your-subdomain>.workers.dev/health
+   curl "https://doorman.<your-subdomain>.workers.dev/v1/check?email=a@gmail.com"
+   # If you set DOORMAN_API_KEY:
    curl -H "Authorization: Bearer $API_KEY" "https://doorman.<your-subdomain>.workers.dev/v1/check?email=a@gmail.com"
    ```
 
-To rotate keys, put a new `DOORMAN_API_KEY` value that contains both the old and new keys, move clients over to the new key, then put `DOORMAN_API_KEY` again without the old one. The Worker is the only place that checks the key, so each new value takes effect on the next request. No redeploy, no container restart.
+The demo's custom hostname is configured outside `wrangler.jsonc`; deploying this repository alone does not attach your own domain. To rotate keys, set `DOORMAN_API_KEY` to both old and new keys, move clients over, then remove the old one. The Worker reads the current secret on each request; no code redeploy is needed.
 
-Elsewhere, run the Docker image with `DOORMAN_API_KEY` set and leave `DOORMAN_AUTH` at its default.
+Elsewhere, run the Docker image with `DOORMAN_API_KEY` set.
 
 ## Refreshing the domain lists
 
@@ -196,7 +213,7 @@ Result:
 Review with `git diff --stat data/` and commit the changes.
 ```
 
-The "invalid" entries are rows a source shipped that don't parse as a domain, plus bare public/private suffixes such as `dyndns.org` or `net.ua`, which are dropped because they could never match a query. If the numbers look sensible, commit the `data/` changes and deploy. The lists are baked into the image, so a refresh only takes effect after a deploy.
+The "invalid" entries are rows a source shipped that don't parse as a domain, plus bare public/private suffixes such as `dyndns.org` or `net.ua`, which are dropped because they could never match a query. If the numbers look sensible, commit the `data/` changes. The Worker bundles the lists, the Docker image copies them, and Node loads them at startup. Redeploy the Worker, rebuild the Docker image, or restart Node to use updated lists.
 
 ### What the refresh does
 
