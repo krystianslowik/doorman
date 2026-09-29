@@ -1,0 +1,84 @@
+# Domains never listed as free or disposable, even if a source lists them.
+# "example.com" matches that domain only; ".example.com" also matches every subdomain.
+# Lines starting with "#" are comments.
+
+.ddns.org
+.findhere.com
+.freeservers.com
+.zzn.com
+
+# 2026-09-29: universities (institutional addresses route as organisations)
+# Academic suffixes that occur in the upstream free lists:
+.ac.ae
+.ac.fj
+.ac.in
+.ac.nz
+.ac.th
+.ac.uk
+.edu
+.edu.al
+.edu.au
+.edu.bd
+.edu.cn
+.edu.co
+.edu.es
+.edu.gh
+.edu.gt
+.edu.hk
+.edu.in
+.edu.mo
+.edu.mv
+.edu.mx
+.edu.pe
+.edu.pk
+.edu.sa
+.edu.sg
+.edu.tr
+.edu.tw
+.edu.vn
+# Universities outside those suffixes:
+.bcit.ca
+.carleton.ca
+.dal.ca
+.facitec.br
+.grenoble-em.com
+.hec.ca
+.ibat.ie
+.iscte-iul.pt
+.itesm.mx
+.kth.se
+.mcmaster.ca
+.nuim.ie
+.polimi.it
+.polytech-lille.fr
+.queensu.ca
+.ryerson.ca
+.sfu.ca
+.tcd.ie
+.tue.nl
+.ualberta.ca
+.ucalgary.ca
+.uleth.ca
+.umoncton.ca
+.unb.br
+.unb.ca
+.unip.br
+.uottawa.ca
+.upis.br
+.utoronto.ca
+.utu.fi
+.uvic.ca
+.uwindsor.ca
+
+# 2026-09-29: company domains that upstream free lists include
+att.com
+bellsouth.com
+bt.com
+cable.comcast.com
+comcast.com
+earthlink.com
+facebook.com
+gandi.net
+madwire.com
+madwiremedia.com
+orange.com

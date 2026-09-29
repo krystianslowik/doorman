@@ -1,0 +1,13 @@
+{
+  "free": [
+    "https://raw.githubusercontent.com/Kikobeats/free-email-domains/master/domains.json",
+    "https://raw.githubusercontent.com/ankaboot-source/email-open-data/main/free-email-domains.txt",
+    "https://raw.githubusercontent.com/ankaboot-source/email-open-data/main/public-email-providers.txt",
+    "https://raw.githubusercontent.com/ankaboot-source/email-open-data/main/ISP-domains.txt"
+  ],
+  "disposable": [
+    "https://raw.githubusercontent.com/castle/disposable-email-domains/master/disposable-email-domains.txt",
+    "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/disposable_email_blocklist.conf",
+    "https://raw.githubusercontent.com/disposable/disposable-email-domains/master/domains.txt"
+  ]
+}

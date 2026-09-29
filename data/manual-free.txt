@@ -1,0 +1,79 @@
+# Free/consumer providers added by hand, because no source lists them or because they must stay
+# free even if a disposable source lists them. Entries here always end up in free.txt and never
+# in disposable.txt. One domain per line; lines starting with "#" are comments.
+# Record the date and provider with each addition so reviewers can tell why it's here.
+
+# 2026-09-28
+proton.me
+passmail.net
+tuta.com
+tuta.io
+tutanota.com
+tutanota.de
+tutamail.com
+keemail.me
+duck.com
+zohomail.com
+zohomail.eu
+zohomail.in
+internet.ru
+kakao.com
+meta.ua
+atomicmail.io
+mailfence.com
+
+# 2026-09-29: relays that forward to a personal inbox (Sign in with Apple, Firefox Relay,
+# SimpleLogin, addy.io)
+privaterelay.appleid.com
+mozmail.com
+8alias.com
+aleeas.com
+simplelogin.co
+simplelogin.fr
+slmail.me
+slmails.com
+addy.io
+anonaddy.com
+anonaddy.me
+
+# 2026-09-29: consumer providers the maintained sources miss
+# (also every hotmail/outlook/live/msn/yahoo/ymail/aol country variant of the old free.txt that
+# the rebuild dropped)
+a1.net
+aol.it
+fibertel.com.ar
+hotmail.cm
+hotmail.com.ar
+hotmail.com.mx
+hotmail.com.tw
+live.com.my
+msn.com.au
+netvision.net.il
+oi.com.br
+optimum.net
+outlook.com.ar
+speedy.com.ar
+superig.com.br
+upcmail.ie
+voo.be
+walla.com
+yahoo.ar
+yahoo.cl
+yahoo.com.es
+yahoo.id
+yahoo.mx
+yahoo.my
+yahoo.om
+yahoo.ph
+yahoo.uk
+yahoo.vn
+
+# 2026-09-29: paid private mailboxes that disposable sources list
+# (Hushmail, Lavabit, Sohu VIP, Tom VIP, 188 VIP)
+hush.ai
+hush.com
+lavabit.com
+mac.hush.com
+vip.188.com
+vip.sohu.com
+vip.tom.com
