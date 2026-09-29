@@ -6,7 +6,7 @@
 
 ## Try the demo
 
-The [public demo](https://doorman.krystianslowik.com) needs no API key. It allows **five requests per rolling hour per client** (one IPv4 address or IPv6 `/64`); a batch counts as one request.
+The [public demo](https://doorman.krystianslowik.com/v1/check?email=jane@gmail.com) needs no API key. It allows **five requests per rolling hour per client** (one IPv4 address or IPv6 `/64`); a batch counts as one request.
 
 Check one address:
 
