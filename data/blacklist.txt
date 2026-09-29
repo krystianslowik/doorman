@@ -2,6 +2,7 @@
 # "example.com" matches that domain only; ".example.com" also matches every subdomain.
 # Lines starting with "#" are comments.
 
+# From willwhite/freemail's blacklist (ISC, see THIRD_PARTY_NOTICES.md)
 .ddns.org
 .findhere.com
 .freeservers.com

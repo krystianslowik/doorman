@@ -147,12 +147,12 @@ npm test                # checks list integrity and that well-known domains are 
 git diff --stat data/   # review what changed
 ```
 
-The script prints how many valid and invalid domains each source returned, then a summary:
+The script prints how many valid and invalid domains each source returned, then a summary like this one:
 
 ```
 Result:
-  disposable.txt  78221 -> 78141  (+0 / -80)
-  free.txt        5785 -> 5417  (+44 / -412)
+  disposable.txt  78141 -> 78163  (+31 / -9)
+  free.txt        5417 -> 5419  (+3 / -1)
 Review with `git diff --stat data/` and commit the changes.
 ```
 
@@ -183,7 +183,7 @@ These are the sources in `data/sources.json`. Their licences and copyright notic
 
 ## Credits
 
-The idea comes from [willwhite/freemail](https://github.com/willwhite/freemail) (ISC), which isn't maintained anymore. Doorman doesn't include its code or data.
+The idea comes from [willwhite/freemail](https://github.com/willwhite/freemail) (ISC), which isn't maintained anymore. Doorman shares none of its code; the first blacklist entries and some hand-added country domains come from its lists (see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)).
 
 ## Licence
 

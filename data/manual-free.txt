@@ -36,9 +36,8 @@ addy.io
 anonaddy.com
 anonaddy.me
 
-# 2026-09-29: consumer providers the maintained sources miss
-# (also every hotmail/outlook/live/msn/yahoo/ymail/aol country variant of the old free.txt that
-# the rebuild dropped)
+# 2026-09-29: consumer providers the maintained sources miss, including hotmail/outlook/live/
+# msn/yahoo/ymail/aol country domains from willwhite/freemail's list (ISC, see THIRD_PARTY_NOTICES.md)
 a1.net
 aol.it
 fibertel.com.ar
